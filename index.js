@@ -28,7 +28,6 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, fu
   
   app.post("/addCustomer", (req, res) => {
       const newCustomer = {name: req.body.name, email: req.body.email, service: req.body.service, serviceId: req.body.serviceId, serviceDescription: req.body.serviceDescription, serviceImage : req.body.serviceImage, serviceImg: req.body.serviceImg, details: req.body.details, price: req.body.price};
-      console.log(newCustomer.name, newCustomer.serviceImage);
       const file = req.files.file;
       file.mv(`${__dirname}/customer/${file.name}`, err => {
           if(err){
@@ -72,32 +71,31 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, fu
     });
 
     app.post("/addService", (req, res) => {
-        // const newService = {name: req.body.name, description: req.body.description};
         const file = req.files.file;
-        const filePath = `${__dirname}/service/${file.name}`;
-        file.mv(filePath, err => {
-            if(err){
-                console.log(err);
-                res.status(500).send({msg: 'failed to upload'});
-            }
-            const newImg = fs.readFileSync(filePath);
+        // const filePath = `${__dirname}/service/${file.name}`;
+        // file.mv(filePath, err => {
+        //     if(err){
+        //         console.log(err);
+        //         res.status(500).send({msg: 'failed to upload'});
+        //     }
+            const newImg = file.data;
             const encImg = newImg.toString("base64");
             const image = {
-                contentType : req.files.file.mimeType,
-                size : req.files.file.size, 
-                img : Buffer(encImg, "base64")
+                contentType : file.mimeType,
+                size : file.size, 
+                img : Buffer.from(encImg, "base64")
             };
             serviceCollection.insertOne({name: req.body.name, image: image, description: req.body.description})
             .then( result => {
-                fs.remove(filePath, ero => {
-                    if(ero){
-                        console.log(ero);
-                        res.status(500).send({msg: 'failed to upload'});
-                    }
+                // fs.remove(filePath, ero => {
+                //     if(ero){
+                //         console.log(ero);
+                //         res.status(500).send({msg: 'failed to upload'});
+                //     }
                     res.send(result.insertedCount > 0)
-                });
+                // });
             });
-        });
+        // });
         
     });
 

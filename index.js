@@ -14,7 +14,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static('customer'));
-app.use(express.static("service"));
+// app.use(express.static("service"));
 app.use(fileUpload());
 
 const MongoClient = require('mongodb').MongoClient;
@@ -28,14 +28,6 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, fu
   
   app.post("/addCustomer", (req, res) => {
       const newCustomer = {name: req.body.name, email: req.body.email, service: req.body.service, serviceId: req.body.serviceId, serviceDescription: req.body.serviceDescription, serviceImage : req.body.serviceImage, serviceImg: req.body.serviceImg, details: req.body.details, price: req.body.price};
-      const file = req.files.file;
-      file.mv(`${__dirname}/customer/${file.name}`, err => {
-          if(err){
-              console.log(err);
-              return res.status(500).send({msg: 'failed to upload'})
-          }
-          return res.send({name: file.name, path: `/${file.name}`})
-      });
       customerCollection.insertOne(newCustomer)
       .then( result => {
           res.send(result.insertedCount > 0)

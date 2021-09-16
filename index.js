@@ -117,8 +117,8 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, fu
 
 });
 
-app.get('/', (req, res) => {
-    res.send("Hello Creative Agency...");
-})
+// app.get('/', (req, res) => {
+//     res.send("Hello Here N Now...");
+// })
 
 app.listen(process.env.PORT || port);
